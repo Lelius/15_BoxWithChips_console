@@ -17,8 +17,6 @@ int main()
     BoxMainMenu *mainMenu = new BoxMainMenu();
     mainMenu->startMainMenu();
 
-    cin.get();
-
     delete mainMenu;
     return 0;
 }

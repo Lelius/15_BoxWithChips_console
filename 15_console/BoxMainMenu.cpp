@@ -6,34 +6,37 @@ BoxMainMenu::~BoxMainMenu() {}
 
 void BoxMainMenu::startMainMenu()
 {
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO structCursorInfo;
+	GetConsoleCursorInfo(handle, &structCursorInfo);
+	structCursorInfo.bVisible = FALSE;
+	SetConsoleCursorInfo(handle, &structCursorInfo);
+
 	while (true)
 	{
-		std::cout << std::endl;
-		std::cout << "Введите размерность игрового поля (минимум 4х4, максимум 6х6) или нажмите \'й\' для выхода:" << std::endl;
-		std::cout << "- по горизонтали ";
-		std::cin >> str;
-		if (str == "q" || str == "й")
-			return;
-		if (!isNumber(str))
-			continue;
-		xNumBox = std::stoi(str);
-		if (xNumBox < 4 || xNumBox > 6)
-			continue;
+		char chName[] = "ПЯТНАШКИ";
+		unsigned char ch{};
 
-		std::cout << "- по вертикали ";
-		std::cin >> str;
-		if (str == "q" || str == "й")
-			return;
-		if (!isNumber(str))
-			continue;
-		yNumBox = std::stoi(str);
-		if (yNumBox < 4 || yNumBox > 6)
-			continue;
+		system("cls");
 		std::cout << std::endl;
+		for (int i = 0; i < 8; ++i)
+		{
+			std::cout << chName[i];
+			Sleep(300);
+		}
+		Sleep(1000);
 
-		BoxWithChips *box = new BoxWithChips(xNumBox, yNumBox);
-		boxWithChipsGameLoop(box);
-		delete box;
+		std::cout << "\n\nEnter - начать игру, управление в игре стрелками." << std::endl;
+		std::cout << "Esc - выход из игры.";
+		ch = _getch();
+		if (ch == 27)
+			return;
+		if (ch == 13)
+		{
+			BoxWithChips *box = new BoxWithChips(4, 4);
+			boxWithChipsGameLoop(box);
+			delete box;
+		}
 	}
 }
 
@@ -47,32 +50,30 @@ void BoxMainMenu::boxWithChipsGameLoop(BoxWithChips *boxWithChips)
 
 	while (true)
 	{
-		//std::string str;
 		unsigned char ch{};
+		system("cls");
 		boxWithChipsOnScreen(boxWithChips);
-		//std::cin >> str;
 		ch = _getch();
-		if (ch == 'q' || ch == 'й')
+		if (ch == 27)
 		{
 			std::cout << std::endl << "Прерывание игры." << std::endl;
 			return;
 		}
-		if (ch == 'w') { boxWithChips->toTheUpChip(); }
-		if (ch == 's') { boxWithChips->toTheBottomChip(); }
-		if (ch == 'a') { boxWithChips->toTheLeftChip(); }
-		if (ch == 'd') { boxWithChips->toTheRightChip(); }
+
+		if (ch == 72) { boxWithChips->toTheUpChip(); }
+		if (ch == 80) { boxWithChips->toTheBottomChip(); }
+		if (ch == 75) { boxWithChips->toTheLeftChip(); }
+		if (ch == 77) { boxWithChips->toTheRightChip(); }
 
 		if (boxWithChips->isMatchingChips())
 		{
+			system("cls");
 			boxWithChipsOnScreen(boxWithChips);
-			std::cout << std::endl << "Поздравляю, вы правильно собрали последовательность.";
+			std::cout << std::endl << std::endl << "Поздравляю, вы правильно собрали последовательность.";
 			Sleep(5000);
 			return;
 		}
 	}
-
-	std::cin.get();
-	std::cin.get();
 }
 
 
